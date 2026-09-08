@@ -1,0 +1,4 @@
+# The gomobile-generated Android binding -- not built here (no Go/gomobile/
+# Android NDK toolchain confirmed available in this environment). Staged
+# manually before a Gradle build; see ../../README.md.
+Wavewalletdk.aar

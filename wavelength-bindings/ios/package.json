@@ -1,0 +1,23 @@
+{
+  "name": "wavelength-bare-addon",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Bare native addon binding the Wavelength gomobile daemon (Wavewalletdk.xcframework) directly, bypassing WebAssembly.",
+  "types": "./index.d.ts",
+  "exports": {
+    "./package": "./package.json",
+    ".": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "binding.js",
+    "binding.mm",
+    "CMakeLists.txt",
+    "prebuilds"
+  ],
+  "addon": true,
+  "scripts": {
+    "build:native": "./build.sh"
+  }
+}
