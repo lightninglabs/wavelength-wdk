@@ -14,18 +14,33 @@
     "test:all": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --testTimeout=60000",
     "test:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage --testPathIgnorePatterns=integration"
   },
+  "codegenConfig": {
+    "name": "WavelengthSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "engineering.lightning.wavelength.reactnative"
+    }
+  },
   "exports": {
     ".": {
       "pear": "./src/wavelength-transport-bare-native.js",
       "ios": "./src/wavelength-transport-bare-native.js",
+      "android": "./src/wavelength-transport-bare-android.js",
       "darwin": "./src/wavelength-transport-bare-wasm.js",
       "linux": "./src/wavelength-transport-bare-wasm.js",
       "win32": "./src/wavelength-transport-bare-wasm.js",
       "bare": "./src/wavelength-transport-bare-unsupported.js",
       "default": "./src/wavelength-transport-bare-unsupported.js"
     },
+    "./android/ipc-framing": "./src/android/ipc-framing.js",
+    "./native": "./src/NativeWavelength.ts",
     "./package": "./package.json",
     "./app.plugin.cjs": "./app.plugin.cjs"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
   },
   "dependencies": {
     "@lightninglabs/wavelength-core": "0.1.2-rc4",
@@ -52,7 +67,8 @@
       "tests/**/*.js"
     ],
     "globals": [
-      "Bare"
+      "Bare",
+      "BareKit"
     ]
   }
 }

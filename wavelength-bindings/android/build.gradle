@@ -1,0 +1,38 @@
+apply plugin: "com.android.library"
+apply plugin: "org.jetbrains.kotlin.android"
+apply plugin: "com.facebook.react"
+
+react {
+  jsRootDir = file("../src")
+  libraryName = "Wavelength"
+  codegenJavaPackageName = "engineering.lightning.wavelength.reactnative"
+}
+
+android {
+  namespace "engineering.lightning.wavelength.reactnative"
+  compileSdkVersion rootProject.hasProperty("compileSdkVersion") ? rootProject.ext.compileSdkVersion : 35
+
+  defaultConfig {
+    // The gomobile bindings are built with -androidapi 21; RN itself floors
+    // higher, so inherit the app's minSdk when present (see
+    // example/wdk-mobile/app.json's expo-build-properties plugin, minSdkVersion 29).
+    minSdkVersion rootProject.hasProperty("minSdkVersion") ? rootProject.ext.minSdkVersion : 29
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
+
+  kotlinOptions {
+    jvmTarget = "17"
+  }
+}
+
+dependencies {
+  implementation "com.facebook.react:react-android"
+  // The gomobile-generated Android bindings -- staged manually rather than
+  // built by this repo (no Go/gomobile/Android NDK toolchain wired into a
+  // build step yet).
+  api files("libs/Wavewalletdk.aar")
+}
