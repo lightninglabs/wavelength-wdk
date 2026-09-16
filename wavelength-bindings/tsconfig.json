@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "customConditions": ["bare", "darwin"]
+  },
+  "include": ["src/**/*.js", "src/**/*.cjs", "src/**/*.d.ts"],
+  "exclude": ["node_modules", "tests", "ios/build", "android/build", "src/wasm/.worker-scratch"]
+}
