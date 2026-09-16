@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "./types",
+    "rootDir": ".",
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    // "darwin" is this dev machine's real Bare.Addon.host OS component --
+    // needed alongside "bare" so the `wavelength-bindings` import type-checks
+    // against a real, non-throwing transport (wavelength-transport-bare-wasm.js)
+    // instead of the "bare" catch-all (wavelength-transport-bare-unsupported.js,
+    // which always throws and types as `never`). See
+    // wdk-bare-transport-dispatch-migration.md for the condition-map this
+    // resolves against.
+    "customConditions": ["bare", "darwin"]
+  },
+  "include": ["index.js", "src/**/*.js"],
+  "exclude": ["node_modules", "tests", "../worklet/**"]
+}
