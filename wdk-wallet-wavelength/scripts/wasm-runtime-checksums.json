@@ -1,0 +1,14 @@
+{
+  "version": "v0.1.2-rc3",
+  "sha256": {
+    "wavewalletdk.wasm": "055939c1db83b644e1c5025e73f4619eb45d1b5e219f8cc6d6455a63adb2865b",
+    "wavewalletdk.wasm.gz": "3668886b93b36122433d70e00688e284a8198a991aaede48e82f08f952ffadbe",
+    "wasm_exec.js": "0c949f4996f9a89698e4b5c586de32249c3b69b7baadb64d220073cc04acba14",
+    "sqlite-bridge.js": "9295fc39491ea6ee75873625920a4e08f5f3a3e2c046f50cde7912bde6525d1b",
+    "sqlite-worker.js": "d27fed4002d180eba0d09e25c4de6edad9593d5ec339f7dc7cdf1d51ad4befb3",
+    "sqlite-node-vfs.js": "b640ab0e4985d7090484d35c5f56384bb667b32a27e7319cc870e9a00972e428",
+    "sqlite3.js": "ceb7e58031eebac151c5a0374bc8bb82dff6221bac55947662011a7cb485bac9",
+    "sqlite3.wasm": "4dd52fadf5d76e0abee36e07441baa2b53a760d1591d3ba1200eca88e11e82c6",
+    "sqlite3-opfs-async-proxy.js": "4ea2bcbd715b0d56089fc871ea241f8c5985d8669d1ddecaab4d56a8da806ce9"
+  }
+}
