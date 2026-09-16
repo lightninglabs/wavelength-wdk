@@ -16,13 +16,16 @@
   },
   "exports": {
     ".": {
+      "pear": "./src/wavelength-transport-bare-native.js",
+      "ios": "./src/wavelength-transport-bare-native.js",
       "darwin": "./src/wavelength-transport-bare-wasm.js",
       "linux": "./src/wavelength-transport-bare-wasm.js",
       "win32": "./src/wavelength-transport-bare-wasm.js",
       "bare": "./src/wavelength-transport-bare-unsupported.js",
       "default": "./src/wavelength-transport-bare-unsupported.js"
     },
-    "./package": "./package.json"
+    "./package": "./package.json",
+    "./app.plugin.cjs": "./app.plugin.cjs"
   },
   "dependencies": {
     "@lightninglabs/wavelength-core": "0.1.2-rc4",
@@ -32,9 +35,13 @@
     "bare-node-runtime": "^1.5.0",
     "bare-path": "^3.1.1",
     "bare-thread": "^1.2.4",
-    "bare-worker": "^4.0.0"
+    "bare-worker": "^4.0.0",
+    "wavelength-bare-addon": "file:./ios"
   },
   "devDependencies": {
+    "bare-make": "^1.8.0",
+    "cmake-bare": "^1.8.0",
+    "cmake-npm": "^1.1.2",
     "cross-env": "7.0.3",
     "jest": "29.7.0",
     "standard": "17.1.2",
