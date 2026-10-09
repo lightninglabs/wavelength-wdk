@@ -1,0 +1,46 @@
+name: CI
+
+# Lint, types and tests for the wallet package. Nothing here builds the native
+# addon: its prebuilds are committed, and the daemon binaries are fetched.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  merge_group:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  wallet:
+    name: wdk-wallet-wavelength
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        working-directory: wdk-wallet-wavelength
+        run: npm run lint
+
+      - name: Typecheck
+        working-directory: wdk-wallet-wavelength
+        run: npm run typecheck
+
+      - name: Test
+        working-directory: wdk-wallet-wavelength
+        run: npm test
