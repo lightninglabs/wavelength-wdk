@@ -1,7 +1,8 @@
 name: CI
 
-# Lint, types and tests for the wallet package. Nothing here builds the native
-# addon: its prebuilds are committed, and the daemon binaries are fetched.
+# Lint, types and tests for the wallet package, and the example app's worklet
+# bundle. Nothing here builds the native addon or a device app: the addon's
+# prebuilds are committed, and the daemon binaries are fetched, not built.
 on:
   push:
     branches: [main]
@@ -41,6 +42,32 @@ jobs:
         working-directory: wdk-wallet-wavelength
         run: npm run typecheck
 
+      # Includes the check that every Lightning Labs SDK pin agrees with the
+      # daemon release the binary checksums are keyed by.
       - name: Test
         working-directory: wdk-wallet-wavelength
+        run: npm test
+
+  example:
+    name: Example app bundles
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install
+        run: npm ci
+
+      # The worklet bundle is the one artifact that silently rots: it
+      # resolves export conditions and addon prebuilds at pack time, so a
+      # change to either shows up here and nowhere else.
+      - name: Build the worklet bundle
+        working-directory: example/wdk-mobile
+        run: npm run build:worklet-bundle
+
+      - name: Test
+        working-directory: example/wdk-mobile
         run: npm test

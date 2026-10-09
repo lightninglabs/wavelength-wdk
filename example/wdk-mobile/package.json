@@ -1,0 +1,44 @@
+{
+  "private": true,
+  "name": "wdk-mobile",
+  "description": "Wavelength/WDK demo app embedding Bare in Expo via react-native-bare-kit.",
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "postinstall": "node scripts/link-addons.mjs",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "build:worklet-bundle": "bare-pack --preset mobile --base ../.. -o worklet/driver-wdk.bundle.js worklet/driver-wdk.mjs",
+    "test": "jest"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@lightninglabs/wavelength-react-native": "0.2.0-rc1",
+    "@lightninglabs/wdk-wallet-wavelength": "1.0.0-beta.1",
+    "b4a": "^1.6.7",
+    "expo": "~55.0.23",
+    "expo-build-properties": "~55.0.9",
+    "expo-clipboard": "~55.0.17",
+    "expo-constants": "~55.0.7",
+    "expo-file-system": "~55.0.24",
+    "expo-linking": "~55.0.15",
+    "expo-router": "~55.0.14",
+    "expo-system-ui": "~55.0.17",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-native": "0.83.6",
+    "react-native-b4a": "^0.0.4",
+    "react-native-bare-kit": "^0.15.6",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.23.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.10",
+    "babel-jest": "29.7.0",
+    "babel-preset-expo": "~55.0.24",
+    "bare-link": "^3.3.0",
+    "bare-pack": "^2.2.1",
+    "jest": "29.7.0",
+    "typescript": "^5.3.3"
+  }
+}

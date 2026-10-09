@@ -5,6 +5,7 @@
   "workspaces": [
     "wavelength-bare-addon",
     "wdk-wallet-wavelength",
-    "example/wdk-cli"
+    "example/wdk-cli",
+    "example/wdk-mobile"
   ]
 }
