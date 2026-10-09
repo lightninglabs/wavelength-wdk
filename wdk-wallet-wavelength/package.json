@@ -36,6 +36,7 @@
     "fetch-aar": "node scripts/fetch-aar.cjs",
     "build:types": "rimraf types; tsc",
     "typecheck": "tsc --noEmit",
+    "fetch:wasm-runtime": "bash scripts/fetch-wasm-runtime.sh",
     "lint": "standard --env jest",
     "lint:fix": "standard --fix --env jest",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --testPathIgnorePatterns=integration",
