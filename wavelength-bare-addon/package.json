@@ -1,0 +1,53 @@
+{
+  "name": "@lightninglabs/wavelength-bare-addon",
+  "version": "0.0.1",
+  "description": "Bare native addon binding the Wavelength gomobile daemon (Wavewalletdk.xcframework) directly, bypassing WebAssembly.",
+  "keywords": [
+    "wavelength",
+    "lightning",
+    "bare",
+    "addon",
+    "ios"
+  ],
+  "author": "Lightning Labs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lightninglabs/wavelength-wdk.git",
+    "directory": "wavelength-bare-addon"
+  },
+  "types": "./index.d.ts",
+  "exports": {
+    "./package": "./package.json",
+    "./fetch-xcframework": "./scripts/fetch-xcframework.cjs",
+    ".": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "binding.js",
+    "binding.mm",
+    "CMakeLists.txt",
+    "prebuilds",
+    "scripts",
+    "wavelength-bare-addon.podspec"
+  ],
+  "addon": true,
+  "scripts": {
+    "postinstall": "node scripts/fetch-xcframework.cjs",
+    "fetch-xcframework": "node scripts/fetch-xcframework.cjs",
+    "build:native": "./build.sh"
+  },
+  "dependencies": {
+    "@lightninglabs/wavelength-core": "0.2.0-rc1"
+  },
+  "devDependencies": {
+    "bare-make": "^1.8.0",
+    "cmake-bare": "^1.8.0",
+    "cmake-npm": "^1.1.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

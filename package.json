@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "name": "wavelength-wdk",
+  "license": "MIT",
+  "workspaces": [
+    "wavelength-bare-addon"
+  ]
+}
