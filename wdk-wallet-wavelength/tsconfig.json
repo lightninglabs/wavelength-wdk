@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "./types",
+    "rootDir": ".",
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    // "darwin" alongside "bare" makes `#transport` type-check against a real
+    // transport (wavelength-transport-bare-wasm.js) rather than the "bare"
+    // catch-all, which always throws and types as `never`.
+    "customConditions": ["bare", "darwin"]
+  },
+  "include": ["index.js", "src/**/*.js", "src/**/*.cjs", "src/**/*.d.ts"],
+  "exclude": ["node_modules", "tests", "../worklet/**", "src/transports/wasm/.worker-scratch"]
+}

@@ -3,6 +3,7 @@
   "name": "wavelength-wdk",
   "license": "MIT",
   "workspaces": [
-    "wavelength-bare-addon"
+    "wavelength-bare-addon",
+    "wdk-wallet-wavelength"
   ]
 }
