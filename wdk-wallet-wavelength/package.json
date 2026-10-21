@@ -32,6 +32,8 @@
     "LICENSE"
   ],
   "scripts": {
+    "postinstall": "node scripts/fetch-aar.cjs",
+    "fetch-aar": "node scripts/fetch-aar.cjs",
     "build:types": "rimraf types; tsc",
     "typecheck": "tsc --noEmit",
     "lint": "standard --env jest",
