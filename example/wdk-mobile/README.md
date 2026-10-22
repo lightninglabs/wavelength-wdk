@@ -21,6 +21,15 @@ npm run build:worklet-bundle
 
 ### iOS
 
+The Wavelength addon's prebuilds aren't committed, so build them once on a
+fresh checkout (macOS with Xcode), and again after changing the addon or
+moving to a new daemon release. Then relink the app's addons:
+
+```sh
+npm run build:native -w @lightninglabs/wavelength-bare-addon
+npm run postinstall
+```
+
 ```sh
 npm run ios
 ```

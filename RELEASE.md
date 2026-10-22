@@ -38,13 +38,17 @@ checksums, and package versions all agree.
 
 ### iOS prebuilds
 
-The addon's prebuilds in `wavelength-bare-addon/prebuilds` are committed and
-published as-is. They resolve the daemon's `Mobile*` functions when the app
-loads, so nothing at build time catches a prebuild that is out of date with
-the daemon. Rebuild them on a Mac with `wavelength-bare-addon/build.sh` (after
-`npm install` has staged the xcframework) whenever `binding.mm` changes or a
-daemon release changes the signature of a bound function, and commit the
-result with the sync.
+The addon's iOS prebuilds aren't committed. The release workflow builds them
+on macOS against the framework of the daemon release being published and
+packs them into the addon, so the published binaries always match the daemon
+they pair with. CI's `iOS addon` job runs the same build on every PR, so a
+`binding.mm` change that doesn't compile, or a daemon release that removes a
+bound `Mobile*` function or changes its signature, fails there rather than in
+an app.
+
+To build them locally (macOS with Xcode), run
+`npm run build:native -w @lightninglabs/wavelength-bare-addon`. It stages the
+paired framework first.
 
 ## Cutting a release
 
