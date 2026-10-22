@@ -1,8 +1,8 @@
 name: CI
 
-# Lint, types and tests for the wallet package, and the example app's worklet
-# bundle. Nothing here builds the native addon or a device app: the addon's
-# prebuilds are committed, and the daemon binaries are fetched, not built.
+# Lint, types and tests for the wallet package, the example app's worklet
+# bundle, and a build of the iOS addon. Nothing here builds a device app, and
+# the daemon binaries are fetched, not built.
 on:
   push:
     branches: [main]
@@ -62,8 +62,8 @@ jobs:
         run: npm ci
 
       # The worklet bundle is the one artifact that silently rots: it
-      # resolves export conditions and addon prebuilds at pack time, so a
-      # change to either shows up here and nowhere else.
+      # resolves export conditions at pack time, so a change to them shows up
+      # here and nowhere else.
       - name: Build the worklet bundle
         working-directory: example/wdk-mobile
         run: npm run build:worklet-bundle
@@ -71,3 +71,25 @@ jobs:
       - name: Test
         working-directory: example/wdk-mobile
         run: npm test
+
+  addon:
+    name: iOS addon
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      # The install scripts' downloads are best effort and only the
+      # xcframework is needed here, which the build stages itself.
+      - name: Install
+        run: npm ci --ignore-scripts
+
+      # Compiles binding.mm against the paired daemon's headers, so a
+      # binding change or a changed Mobile* signature fails here instead of
+      # in an app. The release workflow builds the published prebuilds the
+      # same way.
+      - name: Build the prebuilds
+        run: npm run build:native -w wavelength-bare-addon
