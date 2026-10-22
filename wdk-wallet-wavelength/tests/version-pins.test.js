@@ -19,7 +19,16 @@ const MANIFESTS = [
 
 const require = createRequire(import.meta.url)
 
-const SDK_PACKAGES = ['@lightninglabs/wavelength-core', '@lightninglabs/wavelength-react-native']
+// This repo's own packages version in lockstep with the daemon release too, so
+// the release workflow can publish them under a single tag.
+const PUBLISHED_MANIFESTS = ['wavelength-bare-addon/package.json', 'wdk-wallet-wavelength/package.json']
+
+const SDK_PACKAGES = [
+  '@lightninglabs/wavelength-core',
+  '@lightninglabs/wavelength-react-native',
+  '@lightninglabs/wavelength-bare-addon',
+  '@lightninglabs/wdk-wallet-wavelength'
+]
 
 function lightningLabsPins () {
   return MANIFESTS.flatMap((file) => {
@@ -38,6 +47,16 @@ test('every Lightning Labs SDK package is pinned to the same exact version', () 
 
   expect(pins.length).toBeGreaterThan(0)
   expect(pins.filter((pin) => pin.version !== expected)).toEqual([])
+})
+
+test('every published package is versioned as the paired daemon release', () => {
+  const expected = RUNTIME_MANIFEST_VERSION.replace(/^v/, '')
+  const versions = PUBLISHED_MANIFESTS.map((file) => ({
+    file,
+    version: JSON.parse(readFileSync(path.join(REPO_ROOT, file), 'utf8')).version
+  }))
+
+  expect(versions.filter((manifest) => manifest.version !== expected)).toEqual([])
 })
 
 test('the paired release has pinned checksums for every binary', () => {
