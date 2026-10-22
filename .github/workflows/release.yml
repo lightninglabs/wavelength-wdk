@@ -1,0 +1,102 @@
+name: Release
+
+# Publishing is driven by GitHub releases: creating a release pushes its v*
+# tag and this workflow publishes both packages at that tag. The packages
+# version in lockstep with the daemon release that
+# @lightninglabs/wavelength-core is pinned to, so a single repo-wide tag names
+# both versions. See RELEASE.md.
+#
+# The trigger is `published` rather than `created` so that a release saved as
+# a draft (whose tag does not exist yet) does not start a run that fails at
+# checkout; publishing the draft fires the run.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  # Mint the OIDC token that npm trusted publishing exchanges for credentials.
+  id-token: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  publish:
+    # Only tag-shaped releases are publishes; anything else (a docs milestone,
+    # a mistagged release) should not spin up an install just to fail the
+    # version check.
+    if: startsWith(github.event.release.tag_name, 'v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # Node 24 bundles an npm new enough for trusted publishing (11.5.1+).
+      # No dependency cache: a release build should not restore state from
+      # earlier runs.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      # The install scripts only stage the daemon binaries an app needs at
+      # build time; publishing ships the package sources, so skip them.
+      - name: Install
+        run: npm ci --ignore-scripts
+
+      # Catch a release cut before the sync landed: the tag, both package
+      # versions, and the daemon release wavelength-core is pinned to must all
+      # agree. The GitHub release's pre-release checkbox must also agree with
+      # the version, so an RC never presents on the releases page as the
+      # latest stable and a stable release never hides as a pre-release.
+      - name: Check the tag matches the package versions and daemon pin
+        env:
+          PRERELEASE: ${{ github.event.release.prerelease }}
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          PIN="$(node wdk-wallet-wavelength/scripts/wasm-runtime-version.mjs)"
+          if [[ "$PIN" != "$GITHUB_REF_NAME" ]]; then
+            echo "::error::@lightninglabs/wavelength-core is paired with $PIN but the release tag is $GITHUB_REF_NAME. The packages version in lockstep with the daemon release; fix the tag or the pin."
+            exit 1
+          fi
+          if [[ "$TAG" == *-* && "$PRERELEASE" != "true" ]]; then
+            echo "::error::$GITHUB_REF_NAME is a prerelease version but the GitHub release is not marked as a pre-release. Recreate the release with the pre-release box checked."
+            exit 1
+          fi
+          if [[ "$TAG" != *-* && "$PRERELEASE" == "true" ]]; then
+            echo "::error::$GITHUB_REF_NAME is a stable version but the GitHub release is marked as a pre-release. Recreate the release without the pre-release box."
+            exit 1
+          fi
+          for pkg in wavelength-bare-addon wdk-wallet-wavelength; do
+            VERSION="$(node -p "require('./$pkg/package.json').version")"
+            if [[ "$VERSION" != "$TAG" ]]; then
+              echo "::error::$pkg is at $VERSION but the release tag is $GITHUB_REF_NAME. Bump the package versions before releasing."
+              exit 1
+            fi
+          done
+
+      # The addon goes first since the wallet depends on it. npm refuses to
+      # republish an existing version, so a version already on the registry
+      # is skipped, which makes re-running a partly failed release safe.
+      # Authentication is npm trusted publishing (OIDC): no NPM_TOKEN secret,
+      # and each package lists this repo + workflow as a trusted publisher on
+      # npmjs.com.
+      #
+      # The dist-tag derives from the version: a stable x.y.z lands on latest,
+      # and a prerelease (any version with a hyphen, e.g. 0.3.0-rc1, which
+      # lockstep forces whenever the daemon ships an RC) lands on next so a
+      # plain `npm install` keeps resolving the last stable release.
+      - name: Publish to npm
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          if [[ "$TAG" == *-* ]]; then DIST_TAG=next; else DIST_TAG=latest; fi
+          for pkg in wavelength-bare-addon wdk-wallet-wavelength; do
+            NAME="$(node -p "require('./$pkg/package.json').name")"
+            if [[ -n "$(npm view "$NAME@$TAG" version 2>/dev/null)" ]]; then
+              echo "$NAME@$TAG is already on npm, skipping."
+              continue
+            fi
+            echo "Publishing $NAME@$TAG to dist-tag $DIST_TAG"
+            npm publish --workspace "$pkg" --tag "$DIST_TAG"
+          done
