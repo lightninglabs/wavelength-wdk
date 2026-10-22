@@ -53,7 +53,7 @@ lines.
 | Upstream change | Touch here |
 |---|---|
 | Any release | The pins, the three checksum files, both package versions, the internal pins, `package-lock.json` (procedure steps 1 to 4) |
-| `Mobile*` function added, removed, or its signature changed in `Mobile.objc.h` | The `WAVELENGTH_JSON_METHOD` / `WAVELENGTH_GETTER_METHOD` lists in `wavelength-bare-addon/binding.mm`; the method list in `wavelength-bare-addon/index.d.ts`; `GETTER_METHODS` / `SCALAR_METHODS` in `wdk-wallet-wavelength/src/transports/wavelength-transport-bare-native.js`; then rebuild the prebuilds (step 6). Nothing at build or install time catches a stale prebuild: it resolves `Mobile*` when the app loads |
+| `Mobile*` function added, removed, or its signature changed in `Mobile.objc.h` | The `WAVELENGTH_JSON_METHOD` / `WAVELENGTH_GETTER_METHOD` lists in `wavelength-bare-addon/binding.mm`; the method list in `wavelength-bare-addon/index.d.ts`; `GETTER_METHODS` / `SCALAR_METHODS` in `wdk-wallet-wavelength/src/transports/wavelength-transport-bare-native.js`; then build the addon (step 6). A removed function or a changed signature fails to compile; a new function is simply unreachable until it's bound |
 | `WavelengthClient` methods, request or result types in core's `.d.ts` | The wrappers in `wdk-wallet-wavelength/src/wallet-account-*.js` and `wallet-manager-wavelength.js`, their JSDoc typedefs (and `index.js`'s), the API section of `wdk-wallet-wavelength/README.md`, then `npm run build:types -w wdk-wallet-wavelength` (the `types/` folder is committed) |
 | React Native package exports or the `NativeWavelength` module | `wdk-wallet-wavelength/src/transports/wavelength-native-module.js`, `src/transports/global.d.ts`, and `example/wdk-mobile/lib/ipc-relay.js`. A new daemon method needs no Android code here: the relay sends every method through one generic `call(method, paramsJson)` |
 | Files in the WASM runtime archive | `FILES` in `wdk-wallet-wavelength/scripts/fetch-wasm-runtime.sh` and the keys in `wdk-wallet-wavelength/scripts/wasm-runtime-checksums.json` |
@@ -91,9 +91,12 @@ lines.
    unrelated fields (such as `libc` entries), your npm differs from the one
    that last wrote the file; edit only the changed versions instead.
 5. **API changes**: work through the table rows that apply.
-6. **iOS prebuilds** (only when `binding.mm` changed or a bound `Mobile*`
-   signature changed): on macOS, with the new framework staged, run
-   `wavelength-bare-addon/build.sh` and commit `wavelength-bare-addon/prebuilds`.
+6. **iOS addon** (macOS with Xcode):
+   `npm run build:native -w @lightninglabs/wavelength-bare-addon` stages the
+   new framework and compiles the binding against it, the same build CI's
+   `iOS addon` job and the release run. The prebuilds aren't committed. Then
+   run `npm run postinstall` in `example/wdk-mobile`: step 4's install linked
+   the old prebuilds into the example app.
 7. **Verify** with the ladder below, then **commit** with the repo's area
    prefixes (`wdk:`, `addon:`, `example:`, `docs:`), one logical change
    each. The pins, checksums and versions are one change.
@@ -104,7 +107,7 @@ lines.
 cd wdk-wallet-wavelength
 npm run lint && npm run typecheck && npm test   # includes version-pins.test.js
 cd ../example/wdk-mobile
-npm run build:worklet-bundle && npm test        # catches export-condition and addon packing breaks
+npm run build:worklet-bundle && npm test        # catches export-condition breaks
 cd ../../wdk-wallet-wavelength
 npm run fetch:wasm-runtime -- --release         # downloads vX and verifies the WASM checksums
 cp -r ../.wavelength-wasm-runtime ../example/wdk-cli/
@@ -145,8 +148,13 @@ the whole cycle including its RCs. For an RC, it's the tag just before it.
   core whose release has no pinned checksums.
 - Taking the WASM checksums from `Wavewalletdk.wasm.tar.gz`'s asset digest.
   The checksum file pins the extracted files, not the archive.
-- Treating a green `npm test` as proof the iOS addon works. The prebuilds are
-  only exercised on a device or simulator.
+- Checking only a Debug build. Release dead-strips the daemon framework's
+  `Mobile*` functions unless the podspec marks them required (it derives the
+  list from the prebuild with `nm -u`); a gap there aborts a Release app at
+  launch with "symbol not found in flat namespace".
+- Treating a green addon build as proof the iOS addon works. Compiling proves
+  the `Mobile*` signatures match, not that the app loads and runs it; only a
+  device or simulator build does.
 
 ## After the sync: improve this skill
 
