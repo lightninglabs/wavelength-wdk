@@ -39,6 +39,9 @@ and checksum-verified on install, from the wavelength release that
 The packages and examples are npm workspaces: run `npm install` once at the
 repo root.
 
+See [`RELEASE.md`](./RELEASE.md) for how versions are set and packages are
+published to npm.
+
 ## wdk-wallet-wavelength
 
 Implements WDK's standard `WalletManager`/`WalletAccount` interfaces for
