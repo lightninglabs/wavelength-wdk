@@ -1,6 +1,10 @@
+require 'json'
+
+package = JSON.parse(File.read(File.join(__dir__, 'package.json')))
+
 Pod::Spec.new do |s|
   s.name         = 'wavelength-bare-addon'
-  s.version      = '0.0.1'
+  s.version      = package['version']
   s.summary      = 'Vendors Wavewalletdk.xcframework, the dynamic dependency this Bare native addon links against (see CMakeLists.txt).'
   s.homepage     = 'https://wavelength.lightning.engineering'
   s.license      = { :type => 'MIT' }

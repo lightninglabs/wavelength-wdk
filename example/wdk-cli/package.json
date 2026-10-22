@@ -9,7 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "@lightninglabs/wavelength-core": "0.2.0-rc1",
-    "@lightninglabs/wdk-wallet-wavelength": "1.0.0-beta.1",
+    "@lightninglabs/wdk-wallet-wavelength": "0.2.0-rc1",
     "bare-inspect": "^3.1.5",
     "bare-node-runtime": "^1.5.0",
     "bare-repl": "^6.1.1"

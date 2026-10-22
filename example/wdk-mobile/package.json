@@ -14,7 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "@lightninglabs/wavelength-react-native": "0.2.0-rc1",
-    "@lightninglabs/wdk-wallet-wavelength": "1.0.0-beta.1",
+    "@lightninglabs/wdk-wallet-wavelength": "0.2.0-rc1",
     "b4a": "^1.6.7",
     "expo": "~55.0.23",
     "expo-build-properties": "~55.0.9",
