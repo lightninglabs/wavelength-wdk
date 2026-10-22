@@ -419,10 +419,14 @@ wavelength_work_json(wavelength_call_t *call) {
   wavelength_set_data(call, result);
 }
 
+// Assigning to the typed pointer before the void * cast makes a Mobile*
+// signature that no longer matches fail to compile instead of being called
+// with the wrong arguments at runtime.
 #define WAVELENGTH_JSON_METHOD(name, mobile_fn) \
   static js_value_t * \
   wavelength_##name(js_env_t *env, js_callback_info_t *info) { \
-    return wavelength_queue_call(env, info, wavelength_work_json, (void *) mobile_fn); \
+    wavelength_json_fn_t fn = mobile_fn; \
+    return wavelength_queue_call(env, info, wavelength_work_json, (void *) fn); \
   }
 
 WAVELENGTH_JSON_METHOD(startExternalSeedWallet, MobileStartExternalSeedWallet)
@@ -504,7 +508,8 @@ wavelength_work_getter(wavelength_call_t *call) {
 #define WAVELENGTH_GETTER_METHOD(name, mobile_fn) \
   static js_value_t * \
   wavelength_##name(js_env_t *env, js_callback_info_t *info) { \
-    return wavelength_queue_call(env, info, wavelength_work_getter, (void *) mobile_fn); \
+    wavelength_getter_fn_t fn = mobile_fn; \
+    return wavelength_queue_call(env, info, wavelength_work_getter, (void *) fn); \
   }
 
 WAVELENGTH_GETTER_METHOD(getInfo, MobileGetInfo)
@@ -531,12 +536,14 @@ wavelength_work_sat(wavelength_call_t *call) {
 
 static js_value_t *
 wavelength_confirmedBalanceSat(js_env_t *env, js_callback_info_t *info) {
-  return wavelength_queue_call(env, info, wavelength_work_sat, (void *) MobileConfirmedBalanceSat);
+  wavelength_sat_fn_t fn = MobileConfirmedBalanceSat;
+  return wavelength_queue_call(env, info, wavelength_work_sat, (void *) fn);
 }
 
 static js_value_t *
 wavelength_pendingInboundSat(js_env_t *env, js_callback_info_t *info) {
-  return wavelength_queue_call(env, info, wavelength_work_sat, (void *) MobilePendingInboundSat);
+  wavelength_sat_fn_t fn = MobilePendingInboundSat;
+  return wavelength_queue_call(env, info, wavelength_work_sat, (void *) fn);
 }
 
 static void

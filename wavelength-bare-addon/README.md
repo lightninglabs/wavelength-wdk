@@ -13,10 +13,11 @@ runtime.
 
 ## Binaries
 
-The package ships prebuilt addons for `ios-arm64` (devices) and
-`ios-arm64-simulator`. The daemon framework itself is not in the package: on
-macOS, the install script downloads it from the wavelength release that
-`@lightninglabs/wavelength-core` is paired with and checks it against the
+The package ships prebuilt addons for `ios-arm64` (devices),
+`ios-arm64-simulator` and `ios-x64-simulator`, built for each release against
+the daemon framework it pairs with. The daemon framework itself is not in the
+package: on macOS, the install script downloads it from the wavelength release
+that `@lightninglabs/wavelength-core` is paired with and checks it against the
 checksum pinned in `scripts/checksums.json`. The download is best effort during
 `npm install`. The Expo config plugin in `wdk-wallet-wavelength` retries it
 during `expo prebuild` and fails the build if it still can't stage the

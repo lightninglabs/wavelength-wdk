@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.25)
 
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/node_modules/cmake-bare")
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/node_modules/cmake-npm")
+# npm workspaces hoist the build tools to the repo root's node_modules, so look
+# there as well as in this package's own.
+foreach(modules "${CMAKE_CURRENT_SOURCE_DIR}/node_modules" "${CMAKE_CURRENT_SOURCE_DIR}/../node_modules")
+  list(APPEND CMAKE_PREFIX_PATH "${modules}/cmake-bare" "${modules}/cmake-npm")
+endforeach()
 
 find_package(cmake-bare REQUIRED)
 

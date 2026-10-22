@@ -15,20 +15,49 @@ on:
 
 permissions:
   contents: read
-  # Mint the OIDC token that npm trusted publishing exchanges for credentials.
-  id-token: write
 
 defaults:
   run:
     shell: bash
 
 jobs:
-  publish:
+  # The addon's iOS prebuilds aren't committed. Build them on macOS against
+  # the framework of the daemon release being published, so the binaries in
+  # the package always match the daemon it pairs with.
+  prebuilds:
+    name: iOS addon prebuilds
     # Only tag-shaped releases are publishes; anything else (a docs milestone,
-    # a mistagged release) should not spin up an install just to fail the
+    # a mistagged release) should not spin up a build just to fail the
     # version check.
     if: startsWith(github.event.release.tag_name, 'v')
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install
+        run: npm ci --ignore-scripts
+
+      - name: Build the prebuilds
+        run: npm run build:native -w wavelength-bare-addon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: addon-prebuilds
+          path: wavelength-bare-addon/prebuilds
+          if-no-files-found: error
+
+  publish:
+    needs: prebuilds
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Mint the OIDC token that npm trusted publishing exchanges for
+      # credentials. Only this job needs it.
+      id-token: write
     steps:
       - uses: actions/checkout@v5
 
@@ -75,6 +104,11 @@ jobs:
               exit 1
             fi
           done
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: addon-prebuilds
+          path: wavelength-bare-addon/prebuilds
 
       # The addon goes first since the wallet depends on it. npm refuses to
       # republish an existing version, so a version already on the registry

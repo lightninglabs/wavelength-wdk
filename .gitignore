@@ -18,5 +18,6 @@ web-build/
 .wavelength-cli-demo-data/
 wavelength-bare-addon/Wavewalletdk.xcframework/
 wavelength-bare-addon/build/
+wavelength-bare-addon/prebuilds/
 *.wasm
 wdk-wallet-wavelength/src/transports/wasm/.worker-scratch/
