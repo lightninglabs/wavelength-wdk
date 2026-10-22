@@ -11,9 +11,11 @@
   ],
   "author": "Lightning Labs",
   "license": "MIT",
+  "homepage": "https://github.com/lightninglabs/wavelength-wdk/tree/main/wdk-wallet-wavelength#readme",
+  "bugs": "https://github.com/lightninglabs/wavelength-wdk/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lightninglabs/wavelength-wdk.git",
+    "url": "git+https://github.com/lightninglabs/wavelength-wdk.git",
     "directory": "wdk-wallet-wavelength"
   },
   "main": "index.js",

@@ -11,9 +11,11 @@
   ],
   "author": "Lightning Labs",
   "license": "MIT",
+  "homepage": "https://github.com/lightninglabs/wavelength-wdk/tree/main/wavelength-bare-addon#readme",
+  "bugs": "https://github.com/lightninglabs/wavelength-wdk/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lightninglabs/wavelength-wdk.git",
+    "url": "git+https://github.com/lightninglabs/wavelength-wdk.git",
     "directory": "wavelength-bare-addon"
   },
   "types": "./index.d.ts",
@@ -30,7 +32,9 @@
     "CMakeLists.txt",
     "prebuilds",
     "scripts",
-    "wavelength-bare-addon.podspec"
+    "wavelength-bare-addon.podspec",
+    "README.md",
+    "LICENSE"
   ],
   "addon": true,
   "scripts": {
