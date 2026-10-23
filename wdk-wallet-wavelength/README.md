@@ -107,7 +107,9 @@ console.log('Estimated fee:', feeSat, 'satoshis')
 // Pay an invoice
 const payment = await account.payLightningInvoice({
   invoice: 'lnbc...',
-  maxFeeSat: 100 // optional cap, checked against the quote before sending
+  maxFeeSat: 100, // optional cap, checked against the quote before sending
+  maxCreditSat: 1000, // optional: lets the payment use server credit
+  maxCreditTopupSat: 1000 // optional: lets the payment top up server credit
 })
 ```
 
@@ -499,12 +501,17 @@ Quotes, checks `maxFeeSat`, then pays, as in `sendTransaction`.
   - `invoice` (string): The Lightning invoice to pay
   - `note` (string, optional): Note recorded with the activity
   - `maxFeeSat` (number, optional): Cap on the fee, checked against the quote. Throws if the quote exceeds it, or if the daemon can't determine the fee.
+  - `maxCreditSat` (number, optional): The most server credit, in satoshis, the payment may use, including credit funded by a top-up. Omitted or zero disables credit, so an invoice below the server's minimum Ark output fails to quote, and credit the wallet already holds is not spent.
+  - `maxCreditTopupSat` (number, optional): The most new Ark value, in satoshis, the payment may move into server credit. Omitted or zero disables top-ups. The server may round a shortfall up to its minimum Ark output, and the rounded amount must stay within this cap.
 
 **Returns:** `Promise<SendResult>` — The payment's result
 
 ##### `quotePayLightningInvoice(options)`
 **Parameters:**
-- `options` (object): `{ invoice: string }`
+- `options` (object):
+  - `invoice` (string): The Lightning invoice to quote
+  - `maxCreditSat` (number, optional): The most server credit, in satoshis, the payment may use, including credit funded by a top-up. Omitted or zero disables credit, so an invoice below the server's minimum Ark output fails to quote, and credit the wallet already holds is not spent.
+  - `maxCreditTopupSat` (number, optional): The most new Ark value, in satoshis, the payment may move into server credit. Omitted or zero disables top-ups. The server may round a shortfall up to its minimum Ark output, and the rounded amount must stay within this cap.
 
 **Returns:** `Promise<bigint>` — The expected fee, in satoshis. Throws if the daemon can't determine the fee.
 
