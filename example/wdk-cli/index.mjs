@@ -67,6 +67,16 @@ function requireActiveAccount (arg) {
   return account
 }
 
+// The daemon disables server credit on an invoice payment unless the request
+// caps it, which leaves invoices below the server's minimum Ark output
+// unpayable. These caps allow whatever the wallet could fund: credit may come
+// from the existing balance or a top-up, and a top-up is funded from the
+// confirmed balance.
+async function creditCaps (account) {
+  const { confirmed, creditAvailable } = await withTimeout(account.getBalanceBreakdown(), `account ${account.index} getBalanceBreakdown()`)
+  return { maxCreditSat: Number(confirmed + creditAvailable), maxCreditTopupSat: Number(confirmed) }
+}
+
 async function openAccount (index) {
   let account = accounts.get(index)
   if (!account) {
@@ -228,14 +238,14 @@ const COMMANDS = {
   async quote ([invoice]) {
     if (!invoice) throw new Error('Usage: quote <invoice>')
     const account = requireActiveAccount()
-    const feeSat = await withTimeout(account.quotePayLightningInvoice({ invoice }), `account ${account.index} quotePayLightningInvoice()`)
+    const feeSat = await withTimeout(account.quotePayLightningInvoice({ invoice, ...await creditCaps(account) }), `account ${account.index} quotePayLightningInvoice()`)
     return `${feeSat.toString()} sat`
   },
 
   async payinvoice ([invoice]) {
     if (!invoice) throw new Error('Usage: payinvoice <invoice>')
     const account = requireActiveAccount()
-    const result = await withTimeout(account.payLightningInvoice({ invoice }), `account ${account.index} payLightningInvoice()`)
+    const result = await withTimeout(account.payLightningInvoice({ invoice, ...await creditCaps(account) }), `account ${account.index} payLightningInvoice()`)
     return { hash: result.hash, fee: result.fee?.toString() }
   },
 
