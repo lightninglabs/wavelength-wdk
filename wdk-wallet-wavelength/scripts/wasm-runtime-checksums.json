@@ -1,7 +1,7 @@
 {
-  "v0.2.0-rc1": {
-    "wavewalletdk.wasm": "6c05c82e725602c6e861fc97b9436eeecd6344ae13aedbcfd3775e8b33c0e132",
-    "wavewalletdk.wasm.gz": "321a314fec2350089aefe891f847023fa3a248081c7e8c0fe7e1d9bd5336c4d5",
+  "v0.2.0-rc3": {
+    "wavewalletdk.wasm": "57f8c905e6206007ef00d6fe7db852217a1d7ae127c76a89a68b040b7e474830",
+    "wavewalletdk.wasm.gz": "f6c829f9737db130e133b12123690f80ed81b93a76dd33b6dd164be110d1535a",
     "wasm_exec.js": "0c949f4996f9a89698e4b5c586de32249c3b69b7baadb64d220073cc04acba14",
     "sqlite-bridge.js": "9295fc39491ea6ee75873625920a4e08f5f3a3e2c046f50cde7912bde6525d1b",
     "sqlite-worker.js": "d27fed4002d180eba0d09e25c4de6edad9593d5ec339f7dc7cdf1d51ad4befb3",

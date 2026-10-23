@@ -55,6 +55,16 @@ function requireActiveAccount() {
   return active.account
 }
 
+// The daemon disables server credit on an invoice payment unless the request
+// caps it, which leaves invoices below the server's minimum Ark output
+// unpayable. These caps allow whatever the wallet could fund: credit may come
+// from the existing balance or a top-up, and a top-up is funded from the
+// confirmed balance.
+async function creditCaps(account) {
+  const { confirmed, creditAvailable } = await account.getBalanceBreakdown()
+  return { maxCreditSat: Number(confirmed + creditAvailable), maxCreditTopupSat: Number(confirmed) }
+}
+
 function pushEvent(event, payload) {
   IPC.write(Buffer.from(JSON.stringify({ event, ...payload }) + '\n'))
 }
@@ -185,12 +195,14 @@ const COMMANDS = {
   },
 
   'quote-pay-lightning-invoice': async (msg) => {
-    const feeSat = await requireActiveAccount().quotePayLightningInvoice({ invoice: msg.invoice })
+    const account = requireActiveAccount()
+    const feeSat = await account.quotePayLightningInvoice({ invoice: msg.invoice, ...await creditCaps(account) })
     return { feeSat: feeSat.toString() }
   },
 
   'pay-lightning-invoice': async (msg) => {
-    const result = await requireActiveAccount().payLightningInvoice({ invoice: msg.invoice })
+    const account = requireActiveAccount()
+    const result = await account.payLightningInvoice({ invoice: msg.invoice, ...await creditCaps(account) })
     return { success: !!result }
   },
 

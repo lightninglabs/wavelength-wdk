@@ -42,11 +42,15 @@ import { assertQuotedFee } from './fee-quote.js'
  * @property {string} invoice - Invoice to pay.
  * @property {string} [note] - Note recorded with the activity.
  * @property {number} [maxFeeSat] - Fee cap in satoshis, checked against the quote before sending.
+ * @property {number} [maxCreditSat] - The most server credit, in satoshis, the payment may use, including credit funded by a top-up. Omitted or zero disables credit, so an invoice below the server's minimum Ark output fails to quote.
+ * @property {number} [maxCreditTopupSat] - The most new Ark value, in satoshis, the payment may move into server credit. Omitted or zero disables top-ups.
  */
 
 /**
  * @typedef {Object} QuotePayLightningInvoiceOptions
  * @property {string} invoice - Invoice to quote.
+ * @property {number} [maxCreditSat] - The most server credit, in satoshis, the payment may use, including credit funded by a top-up. Omitted or zero disables credit, so an invoice below the server's minimum Ark output fails to quote.
+ * @property {number} [maxCreditTopupSat] - The most new Ark value, in satoshis, the payment may move into server credit. Omitted or zero disables top-ups.
  */
 
 /** @typedef {import('@tetherto/wdk-wallet').IWalletAccount} IWalletAccount */
@@ -227,8 +231,8 @@ export default class WalletAccountWavelength extends WalletAccountReadOnlyWavele
    * @param {PayLightningInvoiceOptions} options - The payment options.
    * @returns {Promise<SendResult>} The payment's result.
    */
-  async payLightningInvoice ({ invoice, note, maxFeeSat }) {
-    const prepared = await this._client.prepareSend({ invoice, note, maxFeeSat })
+  async payLightningInvoice ({ invoice, note, maxFeeSat, maxCreditSat, maxCreditTopupSat }) {
+    const prepared = await this._client.prepareSend({ invoice, note, maxFeeSat, maxCreditSat, maxCreditTopupSat })
 
     this._assertFeeWithinBudget(prepared, maxFeeSat)
 
@@ -241,8 +245,8 @@ export default class WalletAccountWavelength extends WalletAccountReadOnlyWavele
    * @param {QuotePayLightningInvoiceOptions} options - The invoice to quote.
    * @returns {Promise<bigint>} The expected fee, in satoshis.
    */
-  async quotePayLightningInvoice ({ invoice }) {
-    const prepared = await this._client.prepareSend({ invoice })
+  async quotePayLightningInvoice ({ invoice, maxCreditSat, maxCreditTopupSat }) {
+    const prepared = await this._client.prepareSend({ invoice, maxCreditSat, maxCreditTopupSat })
     return assertQuotedFee(prepared, 'quotePayLightningInvoice')
   }
 
