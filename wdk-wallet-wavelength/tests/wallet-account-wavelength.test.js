@@ -118,6 +118,23 @@ describe('WalletAccountWavelength', () => {
     expect(client.prepareSend).toHaveBeenCalledWith({ invoice: 'lnbc...' })
   })
 
+  it('quotePayLightningInvoice forwards the credit caps to the quote', async () => {
+    const client = createFakeClient()
+    const account = new WalletAccountWavelength(client, 'ab')
+
+    await account.quotePayLightningInvoice({ invoice: 'lnbc...', maxCreditSat: 900, maxCreditTopupSat: 1000 })
+    expect(client.prepareSend).toHaveBeenCalledWith({ invoice: 'lnbc...', maxCreditSat: 900, maxCreditTopupSat: 1000 })
+  })
+
+  it('payLightningInvoice forwards the credit caps to the quote', async () => {
+    const client = createFakeClient()
+    const account = new WalletAccountWavelength(client, 'ab')
+
+    await account.payLightningInvoice({ invoice: 'lnbc...', maxCreditSat: 900, maxCreditTopupSat: 1000 })
+    expect(client.prepareSend).toHaveBeenCalledWith({ invoice: 'lnbc...', maxCreditSat: 900, maxCreditTopupSat: 1000 })
+    expect(client.sendPrepared).toHaveBeenCalled()
+  })
+
   it('quotePayLightningInvoice throws rather than reporting an undetermined fee as zero', async () => {
     const client = createFakeClient({
       prepareSend: jest.fn().mockResolvedValue({ sendIntentId: 'intent-1', expectedFeeSat: 0, feeKnown: false, warning: 'no route yet' })

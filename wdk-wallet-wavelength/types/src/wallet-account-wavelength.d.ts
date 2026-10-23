@@ -30,10 +30,14 @@
  * @property {string} invoice - Invoice to pay.
  * @property {string} [note] - Note recorded with the activity.
  * @property {number} [maxFeeSat] - Fee cap in satoshis, checked against the quote before sending.
+ * @property {number} [maxCreditSat] - The most server credit, in satoshis, the payment may use, including credit funded by a top-up. Omitted or zero disables credit, so an invoice below the server's minimum Ark output fails to quote.
+ * @property {number} [maxCreditTopupSat] - The most new Ark value, in satoshis, the payment may move into server credit. Omitted or zero disables top-ups.
  */
 /**
  * @typedef {Object} QuotePayLightningInvoiceOptions
  * @property {string} invoice - Invoice to quote.
+ * @property {number} [maxCreditSat] - The most server credit, in satoshis, the payment may use, including credit funded by a top-up. Omitted or zero disables credit, so an invoice below the server's minimum Ark output fails to quote.
+ * @property {number} [maxCreditTopupSat] - The most new Ark value, in satoshis, the payment may move into server credit. Omitted or zero disables top-ups.
  */
 /** @typedef {import('@tetherto/wdk-wallet').IWalletAccount} IWalletAccount */
 /** @implements {IWalletAccount} */
@@ -138,14 +142,14 @@ export default class WalletAccountWavelength extends WalletAccountReadOnlyWavele
      * @param {PayLightningInvoiceOptions} options - The payment options.
      * @returns {Promise<SendResult>} The payment's result.
      */
-    payLightningInvoice({ invoice, note, maxFeeSat }: PayLightningInvoiceOptions): Promise<SendResult>;
+    payLightningInvoice({ invoice, note, maxFeeSat, maxCreditSat, maxCreditTopupSat }: PayLightningInvoiceOptions): Promise<SendResult>;
     /**
      * Quotes the fee for paying an invoice.
      *
      * @param {QuotePayLightningInvoiceOptions} options - The invoice to quote.
      * @returns {Promise<bigint>} The expected fee, in satoshis.
      */
-    quotePayLightningInvoice({ invoice }: QuotePayLightningInvoiceOptions): Promise<bigint>;
+    quotePayLightningInvoice({ invoice, maxCreditSat, maxCreditTopupSat }: QuotePayLightningInvoiceOptions): Promise<bigint>;
     /**
      * Scans the paged `receive` feed; the daemon has no lookup by id.
      *
@@ -241,12 +245,28 @@ export type PayLightningInvoiceOptions = {
      * - Fee cap in satoshis, checked against the quote before sending.
      */
     maxFeeSat?: number;
+    /**
+     * - The most server credit, in satoshis, the payment may use, including credit funded by a top-up. Omitted or zero disables credit, so an invoice below the server's minimum Ark output fails to quote.
+     */
+    maxCreditSat?: number;
+    /**
+     * - The most new Ark value, in satoshis, the payment may move into server credit. Omitted or zero disables top-ups.
+     */
+    maxCreditTopupSat?: number;
 };
 export type QuotePayLightningInvoiceOptions = {
     /**
      * - Invoice to quote.
      */
     invoice: string;
+    /**
+     * - The most server credit, in satoshis, the payment may use, including credit funded by a top-up. Omitted or zero disables credit, so an invoice below the server's minimum Ark output fails to quote.
+     */
+    maxCreditSat?: number;
+    /**
+     * - The most new Ark value, in satoshis, the payment may move into server credit. Omitted or zero disables top-ups.
+     */
+    maxCreditTopupSat?: number;
 };
 export type IWalletAccount = import("@tetherto/wdk-wallet").IWalletAccount;
 import WalletAccountReadOnlyWavelength from './wallet-account-read-only-wavelength.js';
