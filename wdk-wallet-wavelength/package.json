@@ -1,6 +1,6 @@
 {
   "name": "@lightninglabs/wdk-wallet-wavelength",
-  "version": "0.2.0-rc3",
+  "version": "0.2.0",
   "description": "A simple package to manage Wavelength (self-custodial Lightning/Ark) wallets.",
   "keywords": [
     "wdk",
@@ -47,8 +47,8 @@
     "test:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage --testPathIgnorePatterns=integration"
   },
   "dependencies": {
-    "@lightninglabs/wavelength-bare-addon": "0.2.0-rc3",
-    "@lightninglabs/wavelength-core": "0.2.0-rc3",
+    "@lightninglabs/wavelength-bare-addon": "0.2.0",
+    "@lightninglabs/wavelength-core": "0.2.0",
     "@noble/curves": "^1.9.7",
     "@noble/hashes": "2.2.0",
     "@scure/bip32": "1.7.0",
