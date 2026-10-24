@@ -32,9 +32,9 @@ jobs:
     if: startsWith(github.event.release.tag_name, 'v')
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
 
@@ -44,7 +44,7 @@ jobs:
       - name: Build the prebuilds
         run: npm run build:native -w wavelength-bare-addon
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: addon-prebuilds
           path: wavelength-bare-addon/prebuilds
@@ -59,12 +59,12 @@ jobs:
       # credentials. Only this job needs it.
       id-token: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       # Node 24 bundles an npm new enough for trusted publishing (11.5.1+).
       # No dependency cache: a release build should not restore state from
       # earlier runs.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
@@ -105,7 +105,7 @@ jobs:
             fi
           done
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: addon-prebuilds
           path: wavelength-bare-addon/prebuilds
